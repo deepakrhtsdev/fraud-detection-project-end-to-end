@@ -10,7 +10,7 @@ This project uses payment data to detect fraud. We have fetched data from mySQL,
 - '.env' : Secure db credentials (not tracked) - included in .gitignore
 
 # Setup
-pip install -r requirements.txt
-python3 scripts/preprocessing.py
-python3 scripts/analysis.py
-python3 scripts/modelling.py
+- pip install -r requirements.txt
+- python3 scripts/preprocessing.py
+- python3 scripts/analysis.py
+- python3 scripts/modelling.py
