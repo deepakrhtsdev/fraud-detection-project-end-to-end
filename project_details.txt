@@ -1,0 +1,5 @@
+Github Repo URL: https://github.com/dhrubsatyam/fraud-detection-project-end-to-end/
+
+Download the data from the Google Drive folder and then import it to your SQL DB and then start working on the project.
+
+Wherever you need to reference, reference from the Github Repo.

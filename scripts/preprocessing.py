@@ -3,32 +3,47 @@ import mysql.connector
 from dotenv import load_dotenv
 import os
 
+# Aim is to do the preprocessing
+"""
+1. getting db config using dotenv > getenv
+2. read query from sql/fetch_data.sql
+3. fetch data from db
+4. cleaning and saving as csv to data/preprocessed_data.csv
 
-#loading the dot env
-load_dotenv()
+TO DO: create docstring for class and methods. ALso, try to include more preprocessing steps.
+"""
 
-#DB Connection
+class Preprocessor:
 
-conn = mysql.connector.connect(
-    host=os.getenv("DB_HOST"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),
-    database=os.getenv("DB_NAME")
-)
+    def __init__(self):
+        load_dotenv()
+        self.db_config = {
+            "host": os.getenv("DB_HOST"),
+            "user": os.getenv("DB_USER"),
+            "password": os.getenv("DB_PASSWORD"),
+            "database": os.getenv("DB_NAME")
+        }
 
-#load fetch_data.sql to read the data from DB
-with open("sql/fetch_data.sql","r") as file:
-    query = file.read()
+    def read_query_from_file(self, sql_path = "sql/fetch_data.sql"):
+        with open(sql_path, "r") as file:
+            query = file.read()
 
-#read it as a dataframe
-df = pd.read_sql(query, conn)
+        return query.strip()
 
-#Preprocessing
-df.dropna(inplace=True)
+    def fetch_data(self,query):
+        conn = mysql.connector.connect(**self.db_config)
+        df = pd.read_sql(query, conn)
+        conn.close()
+        return df
 
-#Encoding
-df_encoded = pd.get_dummies(df,drop_first=True)
+    def clean_and_save(self, df, output_path = "data/preprocessed_data.csv"):
+        df_encoded = pd.get_dummies(df, drop_first=True)
+        df_encoded.to_csv(output_path, index=False)
+        print(f"Preprocessing done! Saved to : {output_path}")
 
-df_encoded.to_csv("data/preprocessed_data.csv", index=False)
 
-print("Data Preprocessing complete. Saved to data/preprocessed_data.csv")
+if __name__ == "__main__":
+    processor = Preprocessor()
+    sql_query = processor.read_query_from_file()
+    df = processor.fetch_data(sql_query)
+    processor.clean_and_save(df)
